@@ -1,30 +1,30 @@
 import React from 'react';
+import {useEffect, useState} from 'react';
 import api from '../utils/Api';
 import Card from './Card';
 
 import photo from "../images/Loading.png";
 function Main(props) {
-    const [userName, setUserName] = React.useState("Пользователь");
-    const [userDescription, setUserDescription] = React.useState("О себе");
-    const [userAvatar, setUserAvatar] = React.useState({photo});
-    const [cards, setCards] = React.useState([]);
+    const [userName, setUserName] = useState("Пользователь");
+    const [userDescription, setUserDescription] = useState("О себе");
+    const [userAvatar, setUserAvatar] = useState({photo});
+    const [cards, setCards] = useState([]);
 
-    React.useEffect(() => {
-        api.getInfo()
-        .then((item) => {
-            setUserName(item.name);
-            setUserDescription(item.about);
-            setUserAvatar(item.avatar);
+    useEffect(() => {
+        Promise.all([
+            api.getInfo(),
+            api.getPhotos()
+          ])
+        .then((items) => {
+            const info = items[0];
+            const photos = items[1];
+            setUserName(info.name);
+            setUserDescription(info.about);
+            setUserAvatar(info.avatar);
+            setCards(photos);
         }).catch((err) => console.log(err));
     }, [])
      
-    React.useEffect(() => {
-        api.getPhotos()
-        .then((item) => {
-            setCards(item);
-        }).catch((err) => console.log(err));
-    }, [])
-
     return (
         <main className="content">
             <section className="profile">

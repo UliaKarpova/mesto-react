@@ -1,4 +1,5 @@
 import React from 'react';
+import {useState} from 'react';
 import '../index.css';
 import Header from './Header';
 import Main from './Main';
@@ -8,10 +9,10 @@ import ImagePopup from './ImagePopup';
 
 
 function App() {
-    const [isEditProfilePopupOpen, setisEditProfilePopupOpen] = React.useState(false);
-    const [isAddPlacePopupOpen, setisAddPlacePopupOpen] = React.useState(false);
-    const [isEditAvatarPopupOpen, setisEditAvatarPopupOpen] = React.useState(false);
-    const [selectedCard, setSelectedCard] = React.useState(null);
+    const [isEditProfilePopupOpen, setisEditProfilePopupOpen] = useState(false);
+    const [isAddPlacePopupOpen, setisAddPlacePopupOpen] = useState(false);
+    const [isEditAvatarPopupOpen, setisEditAvatarPopupOpen] = useState(false);
+    const [selectedCard, setSelectedCard] = useState(null);
 
     function handleEditAvatarClick() {
         setisEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -38,14 +39,14 @@ function App() {
         <Main onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onCardClick={setSelectedCard} onAddPlace={handleAddPlaceClick} />
         <Footer />
        
-        <PopupWithForm name="edit-profile" title="Редактировать профиль" submit="Сохранить" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
+        <PopupWithForm name="edit-profile" title="Редактировать профиль" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
             <input className="popup__item" minLength="2" maxLength="40" id="name" name="name" type="text" placeholder="Имя" required />
             <span className="popup__item-error name-error" />
             <input className="popup__item" minLength="2" maxLength="200" id="info" name="about" type="text" placeholder="Занятие" required />
             <span className="popup__item-error info-error" />
         </PopupWithForm>
     
-        <PopupWithForm name="change-avatar" title="Обновить аватар" submit="Сохранить" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
+        <PopupWithForm name="change-avatar" title="Обновить аватар" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
             <input className="popup__item" id="avatar-link" name="link" type="url"  placeholder="https://somewebsite.com/someimage.jpg" required />
             <span className="popup__item-error avatar-link-error" />
         </PopupWithForm>
