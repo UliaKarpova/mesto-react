@@ -4,8 +4,7 @@ class Api {
         this._headers = config.headers;
         this.sendNewProfileInfo =  this.sendNewProfileInfo.bind(this);
         this.addNewCard = this.addNewCard.bind(this);
-        this.addLike = this.addLike.bind(this);
-        this.deleteLike = this.deleteLike.bind(this);
+        this.changeLikeCardStatus = this.changeLikeCardStatus.bind(this);
         this.sendNewAvatar = this.sendNewAvatar.bind(this);
         this.deleteImage = this.deleteImage.bind(this);
     }
@@ -60,22 +59,9 @@ class Api {
         });
     }
 
-    addLike(data) {
-        return fetch(`${this._url}cards/${data._id}/likes`, {
-            method: 'PUT',
-            headers: this._headers,
-            body: JSON.stringify(data)
-        }).then((res) => {
-            if (res.ok) {
-            return res.json();
-        }
-        return Promise.reject('Произошла ошибка');
-        });
-    }
-
-    deleteLike(data) {
-        return fetch(`${this._url}cards/${data._id}/likes`, {
-            method: 'DELETE',
+    changeLikeCardStatus(data, isLiked) {
+        return fetch(`${this._url}cards/${data}/likes`, {
+            method: `${isLiked ? 'PUT' : 'DELETE'}`,
             headers: this._headers,
         }).then((res) => {
             if (res.ok) {
@@ -101,7 +87,7 @@ class Api {
         return fetch(`${this._url}users/me/avatar`, {
             method: 'PATCH',
             headers: this._headers,
-            body: JSON.stringify({avatar: data.link}) 
+            body: JSON.stringify(data) 
         }).then((res) => {
             if (res.ok) {
             return res.json();

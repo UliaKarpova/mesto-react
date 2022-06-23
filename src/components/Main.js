@@ -2,29 +2,13 @@ import React from 'react';
 import {useEffect, useState} from 'react';
 import api from '../utils/Api';
 import Card from './Card';
-
-import photo from "../images/Loading.png";
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 function Main(props) {
-    const [userName, setUserName] = useState("Пользователь");
-    const [userDescription, setUserDescription] = useState("О себе");
-    const [userAvatar, setUserAvatar] = useState({photo});
-    const [cards, setCards] = useState([]);
-
-    useEffect(() => {
-        Promise.all([
-            api.getInfo(),
-            api.getPhotos()
-          ])
-        .then((items) => {
-            const info = items[0];
-            const photos = items[1];
-            setUserName(info.name);
-            setUserDescription(info.about);
-            setUserAvatar(info.avatar);
-            setCards(photos);
-        }).catch((err) => console.log(err));
-    }, [])
-     
+    const currentUser = React.useContext(CurrentUserContext);
+    const userName = currentUser.name;
+    const userDescription = currentUser.about;
+    const userAvatar = currentUser.avatar;
+        
     return (
         <main className="content">
             <section className="profile">
@@ -42,9 +26,9 @@ function Main(props) {
             </section>
             <section className="elements">
                 <ul className="grid">
-                {cards.map((card) => {
+                {props.cards.map((card) => {
                     return (
-                        <Card key={card._id} card={card} onCardClick={props.onCardClick} />
+                        <Card key={card._id} card={card} onCardLike={props.onCardLike} onCardDelete={props.onCardDelete} onCardClick={props.onCardClick} />
                     )
                 })}
             </ul>
