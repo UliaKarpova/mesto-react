@@ -1,6 +1,12 @@
 import React from 'react';
 
-function PopupWithForm({name, title, submit="Сохранить", isOpen, onClose, children, onSubmit}) {
+function ImageDeletePopup({name, title, isOpen, submit, onClose, onSubmit}) {
+
+    /*function handleSubmit() {
+        /*event.preventDefault();
+        onSubmit();
+    }*/
+
     return (
         <div className={`popup popup_type_${name} ${isOpen && "popup_opened"}`}>
         <div className="popup__container">
@@ -12,7 +18,6 @@ function PopupWithForm({name, title, submit="Сохранить", isOpen, onClos
             className="popup__form popup__edit-button" 
             onSubmit={onSubmit} 
             noValidate>
-                {children}
                 <button className="popup__submit"
                 type="submit">{submit}</button>
             </form>
@@ -21,4 +26,4 @@ function PopupWithForm({name, title, submit="Сохранить", isOpen, onClos
     )
 }
 
-export default PopupWithForm;
+export default ImageDeletePopup;

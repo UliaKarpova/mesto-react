@@ -1,5 +1,6 @@
 import React from 'react';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import {CurrentUserContext} from '../contexts/CurrentUserContext';
+
 function Card(props) {
     const сurrentUser = React.useContext(CurrentUserContext);
     const handleClick = () => {
@@ -15,23 +16,28 @@ function Card(props) {
         props.onCardLike(props.card)
     }
     const handleDeleteCard = () => {
-        props.onCardDelete(props.card);
+        props.onImageDeleteClick(props.card);
     }
 
     return (
         <li key={props.card._id} className="grid__item">
-            <div className="grid__photo" onClick={handleClick} 
+            <div className="grid__photo" 
+            onClick={handleClick} 
             style={{
                 backgroundImage: `url(${props.card.link})`
             }} />
             <div className="grid__signature">
                 <h2 className="grid__text">{props.card.name}</h2>
                 <div className="grid__like">
-                    <button type="button" onClick={handleLikeClick} className={cardLikeButtonClassName} />
+                    <button type="button" 
+                    onClick={handleLikeClick} 
+                    className={cardLikeButtonClassName} />
                     <span className="grid__likes-number">{props.card.likes.length}</span>
                 </div>
             </div>
-            <button type="button" className={cardDeleteButtonClassName} onClick={handleDeleteCard} />
+            <button type="button" 
+            className={cardDeleteButtonClassName} 
+            onClick={handleDeleteCard} />
         </li>
     )
 }

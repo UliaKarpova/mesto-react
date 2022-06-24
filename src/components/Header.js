@@ -4,7 +4,8 @@ import logo from '../images/logo.svg';
 function Header() {
     return (
         <header className="header">
-        <a href={logo} className="header__logo" />
+        <a href={logo} 
+        className="header__logo" />
     </header>
     )
 }

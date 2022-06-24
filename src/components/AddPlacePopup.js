@@ -1,34 +1,72 @@
 import PopupWithForm from "./PopupWithForm";
 import React from "react";
+import {useEffect, useRef, useState} from 'react';
+
 function AddPlacePopup(props) {
+    const placeRef = useRef('');
+    const linkRef = useRef('');
 
-    const [place, setPlace] = React.useState('');
-    const [link, setLink] = React.useState('');
+    const [placeNotValid, setPlaceNotValid] = useState('false');
+    const [placeValidationMessage, setPlaceValidationMessage] = useState("");
+    const [linkNotValid, setLinkNotValid] = useState('false');
+    const [linkValidationMessage, setLinkValidationMessage] = useState("");
 
-    function handlePlaceChange(event) {
-        const newPlace = event.target.value;
-        setPlace(newPlace);
+   
+   useEffect(() => {
+        placeRef.current.value = '';
+        linkRef.current.value = '';
+        setPlaceValidationMessage("");
+        setLinkValidationMessage("");
+    }, [props.isOpen])
+
+    function placeValidation(event) {
+        setPlaceNotValid(!event.target.validity.valid);
+        setPlaceValidationMessage(event.target.validationMessage);
     }
 
-    function handleLinkChange(event) {
-        const newLink = event.target.value;
-        setLink(newLink);
+    function linkValidation(event) {
+        setLinkNotValid(!event.target.validity.valid);
+        setLinkValidationMessage(event.target.validationMessage);
     }
 
-    function handleSubmit(e) {
-        e.preventDefault();
+    function handleSubmit(event) {
+        event.preventDefault();
         props.onSubmit({
-            name: place,
-            link
+            name: placeRef.current.value,
+            link: linkRef.current.value
         });
     }
 
     return (
-        <PopupWithForm name="add-image" title="Новое место" onSubmit={handleSubmit} submit="Создать" isOpen={props.isOpen} onClose={props.onClose}>
-            <input className="popup__item" onChange={handlePlaceChange} minLength="2" maxLength="20" id="image-name" name="name" type="text" placeholder="Название" required />
-            <span className="popup__item-error image-name-error" />
-            <input className="popup__item" onChange={handleLinkChange} id="image-link" name="link" type="url" placeholder="Ссылка на картинку" required />
-            <span className="popup__item-error image-link-error" />
+        <PopupWithForm name="add-image" 
+        title="Новое место" 
+        onSubmit={handleSubmit} 
+        submit="Создать" 
+        isOpen={props.isOpen} 
+        onClose={props.onClose}>
+            <input className="popup__item" 
+            onChange={placeValidation}
+            defaultValue=''
+            ref={placeRef}
+            minLength="2" 
+            maxLength="20" 
+            id="image-name" 
+            name="name" 
+            type="text" 
+            placeholder="Название" 
+            required />
+            <span className={`popup__item-error image-name-error ${placeNotValid && "popup__item-error_visible"}`}>{placeValidationMessage}</span>
+            
+            <input className="popup__item" 
+            onChange={linkValidation}
+            defaultValue=""
+            ref={linkRef}
+            id="image-link" 
+            name="link" 
+            type="url" 
+            placeholder="Ссылка на картинку"
+            required />
+            <span className={`popup__item-error image-link-error ${linkNotValid && "popup__item-error_visible"}`}>{linkValidationMessage}</span>
         </PopupWithForm>
     )
 }

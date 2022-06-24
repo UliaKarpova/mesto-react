@@ -1,33 +1,46 @@
 import PopupWithForm from "./PopupWithForm";
 import React from "react";
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import {useRef, useEffect, useState} from "react";
 
 function EditAvatarPopup(props) {
-    const currentUser = React.useContext(CurrentUserContext);
-    const avatarRef = React.useRef(null);
+    const avatarRef = useRef('');
 
-    React.useEffect(() => {
-        avatarRef.current = currentUser.avatar;
-    }, [currentUser]); 
+    const [notValid, setNotValid] = useState(false);
+    const [validationMessage, setValidationMessage] = useState("");
 
-
-    function handleAvatarChange(event) {
-        avatarRef.current = event.target.value;
-    }
-
+    useEffect(() => {
+        avatarRef.current.value = "";
+        setValidationMessage("");
+    }, [props.isOpen])
 
     function handleSubmit(event) {
         event.preventDefault();
         props.onUpdateAvatar({
-          avatar: avatarRef.current
+          avatar: avatarRef.current.value,
         });
-        
+    }
+
+    function validation(event) {
+        setNotValid(!event.target.validity.valid);
+        setValidationMessage(event.target.validationMessage);
     }
 
     return (
-        <PopupWithForm name="change-avatar" title="Обновить аватар" isOpen={props.isOpen} onClose={props.onClose} onSubmit={handleSubmit}>
-            <input className="popup__item" id="avatar-link" name="link" type="url" onChange={handleAvatarChange} placeholder='https://somewebsite.com/someimage.jpg' required />
-            <span className="popup__item-error avatar-link-error" />
+        <PopupWithForm name="change-avatar" 
+        title="Обновить аватар" 
+        isOpen={props.isOpen} 
+        onClose={props.onClose} 
+        onSubmit={handleSubmit}>
+            <input className="popup__item"
+            id="avatar-link" 
+            name="link" 
+            type="url" 
+            onChange={validation}
+            defaultValue=""
+            ref={avatarRef} 
+            placeholder="Ссылка на изображение" 
+            required />
+            <span className={`popup__item-error avatar-link-error ${notValid && "popup__item-error_visible"}`}>{validationMessage}</span>
         </PopupWithForm>
     )
 }
