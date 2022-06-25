@@ -1,12 +1,6 @@
 import React from 'react';
 
 function ImageDeletePopup({name, title, isOpen, submit, onClose, onSubmit}) {
-
-    /*function handleSubmit() {
-        /*event.preventDefault();
-        onSubmit();
-    }*/
-
     return (
         <div className={`popup popup_type_${name} ${isOpen && "popup_opened"}`}>
         <div className="popup__container">

@@ -6,27 +6,20 @@ function AddPlacePopup(props) {
     const placeRef = useRef('');
     const linkRef = useRef('');
 
-    const [placeNotValid, setPlaceNotValid] = useState('false');
-    const [placeValidationMessage, setPlaceValidationMessage] = useState("");
-    const [linkNotValid, setLinkNotValid] = useState('false');
-    const [linkValidationMessage, setLinkValidationMessage] = useState("");
-
-   
+    const [isValid, setIsValid] = useState(true);
+    const [validationMessage, setValidationMessage] = useState({});
+    
    useEffect(() => {
         placeRef.current.value = '';
         linkRef.current.value = '';
-        setPlaceValidationMessage("");
-        setLinkValidationMessage("");
+        setIsValid(false);
+        setValidationMessage({});
     }, [props.isOpen])
 
-    function placeValidation(event) {
-        setPlaceNotValid(!event.target.validity.valid);
-        setPlaceValidationMessage(event.target.validationMessage);
-    }
-
-    function linkValidation(event) {
-        setLinkNotValid(!event.target.validity.valid);
-        setLinkValidationMessage(event.target.validationMessage);
+    function validation(event) {
+        const input = event.target;
+        setIsValid(input.closest('form').checkValidity());
+        setValidationMessage({...validationMessage, [input.name]: event.target.validationMessage});
     }
 
     function handleSubmit(event) {
@@ -43,9 +36,11 @@ function AddPlacePopup(props) {
         onSubmit={handleSubmit} 
         submit="Создать" 
         isOpen={props.isOpen} 
-        onClose={props.onClose}>
+        onClose={props.onClose}
+        submitStatus={props.submitStatus} 
+        isValid={isValid} >
             <input className="popup__item" 
-            onChange={placeValidation}
+            onChange={validation}
             defaultValue=''
             ref={placeRef}
             minLength="2" 
@@ -55,10 +50,9 @@ function AddPlacePopup(props) {
             type="text" 
             placeholder="Название" 
             required />
-            <span className={`popup__item-error image-name-error ${placeNotValid && "popup__item-error_visible"}`}>{placeValidationMessage}</span>
-            
+            <span className={`popup__item-error image-name-error ${!isValid && "popup__item-error_visible"}`}>{validationMessage.name}</span>
             <input className="popup__item" 
-            onChange={linkValidation}
+            onChange={validation}
             defaultValue=""
             ref={linkRef}
             id="image-link" 
@@ -66,7 +60,7 @@ function AddPlacePopup(props) {
             type="url" 
             placeholder="Ссылка на картинку"
             required />
-            <span className={`popup__item-error image-link-error ${linkNotValid && "popup__item-error_visible"}`}>{linkValidationMessage}</span>
+            <span className={`popup__item-error image-link-error ${!isValid && "popup__item-error_visible"}`}>{validationMessage.link}</span>
         </PopupWithForm>
     )
 }

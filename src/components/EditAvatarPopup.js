@@ -5,11 +5,12 @@ import {useRef, useEffect, useState} from "react";
 function EditAvatarPopup(props) {
     const avatarRef = useRef('');
 
-    const [notValid, setNotValid] = useState(false);
+    const [isValid, setIsValid] = useState(true);
     const [validationMessage, setValidationMessage] = useState("");
 
     useEffect(() => {
         avatarRef.current.value = "";
+        setIsValid(false);
         setValidationMessage("");
     }, [props.isOpen])
 
@@ -21,7 +22,7 @@ function EditAvatarPopup(props) {
     }
 
     function validation(event) {
-        setNotValid(!event.target.validity.valid);
+        setIsValid(event.target.validity.valid);
         setValidationMessage(event.target.validationMessage);
     }
 
@@ -30,7 +31,9 @@ function EditAvatarPopup(props) {
         title="Обновить аватар" 
         isOpen={props.isOpen} 
         onClose={props.onClose} 
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+        submitStatus={props.submitStatus} 
+        isValid={isValid} >
             <input className="popup__item"
             id="avatar-link" 
             name="link" 
@@ -40,7 +43,7 @@ function EditAvatarPopup(props) {
             ref={avatarRef} 
             placeholder="Ссылка на изображение" 
             required />
-            <span className={`popup__item-error avatar-link-error ${notValid && "popup__item-error_visible"}`}>{validationMessage}</span>
+            <span className={`popup__item-error avatar-link-error ${!isValid && "popup__item-error_visible"}`}>{validationMessage}</span>
         </PopupWithForm>
     )
 }

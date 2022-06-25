@@ -5,8 +5,8 @@ import '../index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from "./PopupWithForm";
 import ImagePopup from './ImagePopup';
+import ImageDeletePopup from './ImageDeletePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import {CurrentUserContext} from '../contexts/CurrentUserContext';
@@ -21,6 +21,7 @@ function App() {
     const [selectedCard, setSelectedCard] = useState(null);
     const [cards, setCards] = useState([]);
     const [deletedCard, setDeletedCard] = useState('');
+    const [submitDisabled, setSubmitDisabled] = useState(false);
 
     useEffect(() => {
         api.getPhotos()
@@ -78,26 +79,32 @@ function App() {
     }
 
     function handleUpdateUser(data) {
+        setSubmitDisabled(true);
         api.sendNewProfileInfo(data)
         .then((info) => {
             setCurrentUser(info);
             closeAllPopups();
+            setSubmitDisabled(false);
         }).catch((err) => console.log(err))
     }
 
     function handleUpdateAvatar(data) {
+        setSubmitDisabled(true);
         api.sendNewAvatar(data)
         .then((info) => {
             setCurrentUser(info);
             closeAllPopups();
+            setSubmitDisabled(false);
         }).catch((err) => console.log(err))
     }
 
     function handleAppPlaceSubmit(data) {
+        setSubmitDisabled(true);
         api.addNewCard(data)
         .then((newCard) => {
             setCards([newCard, ...cards]);
             closeAllPopups();
+            setSubmitDisabled(false)
         }).catch((err) => console.log(err))
     }
 
@@ -120,19 +127,22 @@ function App() {
 
             <EditProfilePopup isOpen={isEditProfilePopupOpen} 
             onClose={closeAllPopups} 
-            onUpdateUser={handleUpdateUser} />
+            onUpdateUser={handleUpdateUser} 
+            submitStatus={submitDisabled} />
 
             <EditAvatarPopup isOpen={isEditAvatarPopupOpen} 
             onClose={closeAllPopups} 
-            onUpdateAvatar={handleUpdateAvatar} />
+            onUpdateAvatar={handleUpdateAvatar} 
+            submitStatus={submitDisabled} />
 
             <AddPlacePopup submit="Создать" 
             cards={cards}
             isOpen={isAddPlacePopupOpen} 
             onClose={closeAllPopups} 
-            onSubmit={handleAppPlaceSubmit} />
+            onSubmit={handleAppPlaceSubmit}
+            submitStatus={submitDisabled} />
         
-            <PopupWithForm name="delete-image" 
+            <ImageDeletePopup name="delete-image" 
             title="Вы уверены?" 
             submit="Да" 
             onSubmit={handleCardDelete}

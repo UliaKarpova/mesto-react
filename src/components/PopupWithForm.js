@@ -1,6 +1,12 @@
 import React from 'react';
+import {useState, useEffect} from 'react';
 
-function PopupWithForm({name, title, submit="Сохранить", isOpen, onClose, children, onSubmit}) {
+function PopupWithForm({name, title, submit="Сохранить", isOpen, onClose, children, onSubmit, isValid, submitStatus}) {
+    const [isDisabled, setIsDesabled] = useState(false);
+    useEffect(() => {
+        setIsDesabled(submitStatus || !isValid);
+    }, [submitStatus, isValid])
+
     return (
         <div className={`popup popup_type_${name} ${isOpen && "popup_opened"}`}>
         <div className="popup__container">
@@ -13,7 +19,8 @@ function PopupWithForm({name, title, submit="Сохранить", isOpen, onClos
             onSubmit={onSubmit} 
             noValidate>
                 {children}
-                <button className="popup__submit"
+                <button className={`popup__submit ${!isDisabled ? "" : "popup__submit_disabled"}`}
+                disabled={isDisabled}
                 type="submit">{submit}</button>
             </form>
         </div>
