@@ -24,16 +24,12 @@ function App() {
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     useEffect(() => {
-        api.getPhotos()
-        .then((photos) => {
-            setCards(photos);
-        }).catch((err) => console.log(err));
-    }, [])
-
-    useEffect(() => {
-        api.getInfo()
-        .then((item) => {
-           setCurrentUser(item);
+        Promise.all([
+        api.getPhotos(),
+        api.getInfo()])
+        .then((values) => {
+            setCards(values[0]);
+            setCurrentUser(values[1]);
         }).catch((err) => console.log(err));
     }, [])
 
@@ -120,8 +116,7 @@ function App() {
             onCardClick={setSelectedCard} 
             onAddPlace={handleAddPlaceClick} 
             cards={cards}
-            onCardLike={handleCardLike}
-            /*onCardDelete={handleCardDelete}*/ />
+            onCardLike={handleCardLike} />
 
             <Footer />
 
