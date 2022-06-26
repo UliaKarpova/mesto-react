@@ -1,7 +1,7 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
-import api from '../utils/Api';
-import '../index.css';
+
+import {CurrentUserContext} from '../contexts/CurrentUserContext';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -9,61 +9,51 @@ import ImagePopup from './ImagePopup';
 import ImageDeletePopup from './ImageDeletePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
-import {CurrentUserContext} from '../contexts/CurrentUserContext';
 import AddPlacePopup from '../components/AddPlacePopup';
+import api from '../utils/Api';
+
+import '../index.css';
+
 
 function App() {
-    const [currentUser, setCurrentUser] = useState('');
+    const [currentUser, setCurrentUser] = useState({});
+
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
     const [isImageDeletePopupOpen, setIsImageDeletePopupOpen] = useState(false);
+    
     const [selectedCard, setSelectedCard] = useState(null);
     const [cards, setCards] = useState([]);
-    const [deletedCard, setDeletedCard] = useState('');
+    const [cardGoingToBeDeleted, setCardGoingToBeDeleted] = useState({});
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     useEffect(() => {
         Promise.all([
         api.getPhotos(),
         api.getInfo()])
-        .then((values) => {
-            setCards(values[0]);
-            setCurrentUser(values[1]);
+
+        .then(([cards, data]) => {
+            setCards(cards);
+            setCurrentUser(data);
         }).catch((err) => console.log(err));
     }, [])
 
-    function handleCardLike(card) {
-        const isLiked = card.likes.some(i => i._id === currentUser._id);
-        api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-            setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
-        }).catch((err) => console.log(err))
-    }
-
-    function handleCardDelete(event) {
-        event.preventDefault();
-        api.deleteImage(deletedCard).then(() => {
-            setCards((cards) => cards.filter((c) => c._id === deletedCard._id ? '' : c));
-            closeAllPopups();
-            setDeletedCard('');
-        }).catch((err) => console.log(err))
-    }
-
     function handleEditAvatarClick() {
-        setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
+        setIsEditAvatarPopupOpen(true);
     };
 
     function handleEditProfileClick() {
-        setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
+        setIsEditProfilePopupOpen(true);
     };
 
     function handleAddPlaceClick() {
-        setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
+        setIsAddPlacePopupOpen(true);
     };
 
     function handleImageDeleteClick(data) {
-        setDeletedCard(data);
-        setIsImageDeletePopupOpen(!isImageDeletePopupOpen);
+        setCardGoingToBeDeleted(data);
+        setIsImageDeletePopupOpen(true);
     };
 
     function closeAllPopups() {
@@ -76,6 +66,7 @@ function App() {
 
     function handleUpdateUser(data) {
         setSubmitDisabled(true);
+
         api.sendNewProfileInfo(data)
         .then((info) => {
             setCurrentUser(info);
@@ -86,6 +77,7 @@ function App() {
 
     function handleUpdateAvatar(data) {
         setSubmitDisabled(true);
+
         api.sendNewAvatar(data)
         .then((info) => {
             setCurrentUser(info);
@@ -96,11 +88,30 @@ function App() {
 
     function handleAppPlaceSubmit(data) {
         setSubmitDisabled(true);
+
         api.addNewCard(data)
         .then((newCard) => {
             setCards([newCard, ...cards]);
             closeAllPopups();
             setSubmitDisabled(false)
+        }).catch((err) => console.log(err))
+    }
+
+    function handleCardLike(card) {
+        const isLiked = card.likes.some(i => i._id === currentUser._id);
+
+        api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+            setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
+        }).catch((err) => console.log(err))
+    }
+
+    function handleCardDelete(event) {
+        event.preventDefault();
+
+        api.deleteImage(cardGoingToBeDeleted).then(() => {
+            setCards((cards) => cards.filter((c) => c._id === cardGoingToBeDeleted._id ? '' : c));
+            closeAllPopups();
+            setCardGoingToBeDeleted({});
         }).catch((err) => console.log(err))
     }
 

@@ -1,47 +1,53 @@
 import React from 'react';
-import Card from './Card';
 import {CurrentUserContext} from '../contexts/CurrentUserContext';
+import Card from './Card';
 
-function Main(props) {
+function Main({onImageDeleteClick, onEditAvatar, onEditProfile, onCardClick, onAddPlace, cards, onCardLike}) {
     const currentUser = React.useContext(CurrentUserContext);
-    const userName = currentUser.name;
-    const userDescription = currentUser.about;
-    const userAvatar = currentUser.avatar;
+    const {name, about, avatar} = currentUser;
+    
+    const cardElements = cards.map((card) => {
+        return (
+            <li key={card._id} className="grid__item">
+                <Card card={card} 
+                onImageDeleteClick={onImageDeleteClick}
+                onCardLike={onCardLike} 
+                onCardClick={onCardClick} />
+            </li>
+        )
+    })
         
     return (
         <main className="content">
             <section className="profile">
                 <div className="profile__avatar" 
                 style={{
-                    backgroundImage: `url(${userAvatar})`
+                    backgroundImage: `url(${avatar})`
                 }} />
+                
                 <button type="button" 
                 className="profile__edit-avatar" 
-                onClick={props.onEditAvatar} />
+                onClick={onEditAvatar} />
+                
                 <div className="profile__info">
-                    <h1 className="profile__name">{userName}</h1>
+                    <h1 className="profile__name">{name}</h1>
+                    
                     <button type="button" 
                     className="profile__edit-button" 
-                    onClick={props.onEditProfile} />
-                    <p className="profile__text">{userDescription}</p>
+                    onClick={onEditProfile} />
+                    
+                    <p className="profile__text">{about}</p>
                 </div>
+                
                 <button type="button" 
                 className="profile__add-button" 
-                onClick={props.onAddPlace} />
+                onClick={onAddPlace} />
             </section>
+            
             <section className="elements">
                 <ul className="grid">
-                {props.cards.map((card) => {
-                    return (
-                        <Card key={card._id} 
-                        card={card} 
-                        onImageDeleteClick={props.onImageDeleteClick}
-                        onCardLike={props.onCardLike} 
-                        onCardDelete={props.onCardDelete} 
-                        onCardClick={props.onCardClick} />
-                    )
-                })}
-            </ul>
+                    {cardElements}
+                </ul>
             </section>
         </main>
     )

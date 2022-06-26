@@ -1,10 +1,9 @@
-import PopupWithForm from "./PopupWithForm";
 import React from "react";
 import {useRef, useEffect, useState} from "react";
+import PopupWithForm from "./PopupWithForm";
 
-function EditAvatarPopup(props) {
+function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, submitStatus}) {
     const avatarRef = useRef('');
-
     const [isValid, setIsValid] = useState(true);
     const [validationMessage, setValidationMessage] = useState("");
 
@@ -12,16 +11,16 @@ function EditAvatarPopup(props) {
         avatarRef.current.value = "";
         setIsValid(false);
         setValidationMessage("");
-    }, [props.isOpen])
+    }, [isOpen])
 
     function handleSubmit(event) {
         event.preventDefault();
-        props.onUpdateAvatar({
-          avatar: avatarRef.current.value,
+        onUpdateAvatar({
+            avatar: avatarRef.current.value,
         });
     }
 
-    function validation(event) {
+    function validateForm(event) {
         setIsValid(event.target.validity.valid);
         setValidationMessage(event.target.validationMessage);
     }
@@ -29,21 +28,24 @@ function EditAvatarPopup(props) {
     return (
         <PopupWithForm name="change-avatar" 
         title="Обновить аватар" 
-        isOpen={props.isOpen} 
-        onClose={props.onClose} 
+        isOpen={isOpen} 
+        onClose={onClose} 
         onSubmit={handleSubmit}
-        submitStatus={props.submitStatus} 
+        submitStatus={submitStatus} 
         isValid={isValid} >
+            
             <input className="popup__item"
             id="avatar-link" 
             name="link" 
             type="url" 
-            onChange={validation}
+            onChange={validateForm}
             defaultValue=""
             ref={avatarRef} 
             placeholder="Ссылка на изображение" 
             required />
-            <span className={`popup__item-error avatar-link-error ${!isValid && "popup__item-error_visible"}`}>{validationMessage}</span>
+            
+            <span className={`popup__item-error avatar-link-error ${!isValid && "popup__item-error_visible"}`}>
+            {validationMessage}</span>
         </PopupWithForm>
     )
 }

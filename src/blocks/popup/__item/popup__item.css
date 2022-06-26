@@ -37,7 +37,7 @@
 @media (max-width: 520px) {
     .popup__item {
         width: 238px;
-        margin: 70px 22px 30px;
+        margin: 0 22px 30px;
     }
 }
 
